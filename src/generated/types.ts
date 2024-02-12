@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -14,12 +14,13 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  Upload: { input: any; output: any; }
 };
 
 export type Brand = {
   __typename?: 'Brand';
   country: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
+  id: Scalars['Int']['output'];
   isActive: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   post: Array<Post>;
@@ -34,6 +35,11 @@ export type BrandInfo = {
   brand?: Maybe<Array<Maybe<Brand>>>;
   endCursor: Scalars['Int']['output'];
   hasNextPage: Scalars['Boolean']['output'];
+};
+
+export type File = {
+  __typename?: 'File';
+  url: Scalars['String']['output'];
 };
 
 export enum Gender {
@@ -53,6 +59,7 @@ export type Mutation = {
   updateBrandById?: Maybe<Scalars['String']['output']>;
   updatePostById?: Maybe<Scalars['String']['output']>;
   updateUserById?: Maybe<Scalars['String']['output']>;
+  uploadFile?: Maybe<File>;
 };
 
 
@@ -125,11 +132,16 @@ export type MutationUpdateUserByIdArgs = {
   name: Scalars['String']['input'];
 };
 
+
+export type MutationUploadFileArgs = {
+  file: Scalars['Upload']['input'];
+};
+
 export type Post = {
   __typename?: 'Post';
   brand: Array<Brand>;
   brandId: Scalars['Int']['output'];
-  id: Scalars['ID']['output'];
+  id: Scalars['Int']['output'];
   image: Scalars['String']['output'];
   impressions: Scalars['Int']['output'];
   title: Scalars['String']['output'];
@@ -193,7 +205,7 @@ export type User = {
   brand: Array<Brand>;
   email: Scalars['String']['output'];
   gender: Gender;
-  id: Scalars['ID']['output'];
+  id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
 };
 
@@ -278,8 +290,8 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Brand: ResolverTypeWrapper<Brand>;
   BrandInfo: ResolverTypeWrapper<BrandInfo>;
+  File: ResolverTypeWrapper<File>;
   Gender: Gender;
-  ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
   Post: ResolverTypeWrapper<Post>;
@@ -287,6 +299,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Type: Type;
+  Upload: ResolverTypeWrapper<Scalars['Upload']['output']>;
   User: ResolverTypeWrapper<User>;
   UserInfo: ResolverTypeWrapper<UserInfo>;
 };
@@ -296,20 +309,21 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
   Brand: Brand;
   BrandInfo: BrandInfo;
-  ID: Scalars['ID']['output'];
+  File: File;
   Int: Scalars['Int']['output'];
   Mutation: {};
   Post: Post;
   PostInfo: PostInfo;
   Query: {};
   String: Scalars['String']['output'];
+  Upload: Scalars['Upload']['output'];
   User: User;
   UserInfo: UserInfo;
 };
 
 export type BrandResolvers<ContextType = any, ParentType extends ResolversParentTypes['Brand'] = ResolversParentTypes['Brand']> = {
   country?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   post?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType>;
@@ -327,6 +341,11 @@ export type BrandInfoResolvers<ContextType = any, ParentType extends ResolversPa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type FileResolvers<ContextType = any, ParentType extends ResolversParentTypes['File'] = ResolversParentTypes['File']> = {
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createBrand?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationCreateBrandArgs, 'country' | 'isActive' | 'name' | 'type' | 'userId' | 'year'>>;
   createPost?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, Partial<MutationCreatePostArgs>>;
@@ -337,12 +356,13 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateBrandById?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationUpdateBrandByIdArgs, 'country' | 'id' | 'isActive' | 'name' | 'type' | 'userId' | 'year'>>;
   updatePostById?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationUpdatePostByIdArgs, 'brandId' | 'id' | 'image' | 'impressions' | 'title'>>;
   updateUserById?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationUpdateUserByIdArgs, 'age' | 'email' | 'gender' | 'id' | 'name'>>;
+  uploadFile?: Resolver<Maybe<ResolversTypes['File']>, ParentType, ContextType, RequireFields<MutationUploadFileArgs, 'file'>>;
 };
 
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
   brand?: Resolver<Array<ResolversTypes['Brand']>, ParentType, ContextType>;
   brandId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   image?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   impressions?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -365,12 +385,16 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getUsers?: Resolver<Maybe<ResolversTypes['UserInfo']>, ParentType, ContextType, Partial<QueryGetUsersArgs>>;
 };
 
+export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
+  name: 'Upload';
+}
+
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   age?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   brand?: Resolver<Array<ResolversTypes['Brand']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   gender?: Resolver<ResolversTypes['Gender'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -385,10 +409,12 @@ export type UserInfoResolvers<ContextType = any, ParentType extends ResolversPar
 export type Resolvers<ContextType = any> = {
   Brand?: BrandResolvers<ContextType>;
   BrandInfo?: BrandInfoResolvers<ContextType>;
+  File?: FileResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Post?: PostResolvers<ContextType>;
   PostInfo?: PostInfoResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Upload?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
   UserInfo?: UserInfoResolvers<ContextType>;
 };

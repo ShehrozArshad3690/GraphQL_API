@@ -1,6 +1,7 @@
-schema: schema.graphql
+overwrite: true
+schema: src/graphql/schemas/schema.graphql
 generates:
-  types.ts:
+  src/generated/types.ts:
     plugins:
       - "@graphql-codegen/typescript"
       - "@graphql-codegen/typescript-resolvers"
